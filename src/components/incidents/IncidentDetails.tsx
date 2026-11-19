@@ -3,15 +3,20 @@ import {
   Lightbulb,
   Map as MapIcon,
   MapPin,
+  ShieldAlert,
   TriangleAlert,
+  Waves,
   X,
 } from 'lucide-react';
-import type { Incident, IncidentStatus } from '../../types';
+import { incidentCategoryLabels } from '../../types';
+import type { Incident, IncidentCategory, IncidentStatus } from '../../types';
 
-const categories = {
-  STREETLIGHT: { label: 'Poste apagado', Icon: Lightbulb },
-  POTHOLE: { label: 'Buraco na rua', Icon: TriangleAlert },
-} as const;
+const categories: Record<IncidentCategory, { Icon: typeof Lightbulb }> = {
+  STREETLIGHT: { Icon: Lightbulb },
+  POTHOLE: { Icon: TriangleAlert },
+  FLOOD: { Icon: Waves },
+  SAFETY: { Icon: ShieldAlert },
+};
 
 const statusLabels: Record<IncidentStatus, string> = {
   PENDING: 'Pendente',
@@ -42,7 +47,8 @@ export function IncidentDetails({
   onClose: () => void;
   onMap?: () => void;
 }) {
-  const { Icon: CategoryIcon, label: categoryLabel } = categories[incident.category];
+  const { Icon: CategoryIcon } = categories[incident.category];
+  const categoryLabel = incidentCategoryLabels[incident.category];
   const isCancelled = incident.status === 'CANCELLED';
   const currentStep = statusSteps.indexOf(incident.status);
   const inProgressAt = incident.history.find(

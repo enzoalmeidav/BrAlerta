@@ -1,7 +1,9 @@
+import { useState } from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { IncidentForm } from '../src/components/incidents/IncidentForm';
+import type { IncidentCategory } from '../src/types';
 
 describe('fluxo do formulário de ocorrência', () => {
   it('envia coordenadas e impede reenvio durante o salvamento', async () => {
@@ -43,6 +45,35 @@ describe('fluxo do formulário de ocorrência', () => {
       longitude: -43.465,
     }));
     expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('address');
+  });
+
+  it('sincroniza as categorias 3D selecionadas com o formulário', async () => {
+    const onSubmit = vi.fn().mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    function ControlledForm() {
+      const [category, setCategory] = useState<IncidentCategory>('FLOOD');
+      return (
+        <IncidentForm
+          category={category}
+          onCategoryChange={setCategory}
+          coords={{ lat: -23.025, lng: -43.465 }}
+          onCancel={vi.fn()}
+          onSubmit={onSubmit}
+        />
+      );
+    }
+
+    render(<ControlledForm />);
+    expect(screen.getByRole('button', { name: /Rua alagada/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+    await user.click(screen.getByRole('button', { name: /Segurança/ }));
+    await user.type(screen.getByPlaceholderText(/Poste apagado/), 'Risco no local');
+    await user.type(screen.getByPlaceholderText(/Descreva o problema/), 'Relato de segurança.');
+    await user.click(screen.getByRole('button', { name: /Publicar ocorrência/ }));
+
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ category: 'SAFETY' }));
   });
 
   it('exige marcar um ponto no mapa antes de publicar', async () => {

@@ -4,8 +4,10 @@
 
 > Projeto acadêmico do Enterprise Challenge, curso de Sistemas de Informação da FIAP. Os dados exibidos são fictícios. A aplicação não tem vínculo oficial com órgãos públicos e não substitui os canais da prefeitura, como a Central 1746 do Rio de Janeiro.
 
-- Mapa MapLibre navegável, inclinado em 3D e baseado em OpenStreetMap, sem chave privada.
+- Mapa vetorial MapLibre com OpenFreeMap, extrusão 3D de edifícios e câmera inicial no Recreio dos Bandeirantes, sem chave privada.
 - Alternância 2D/3D, zoom, rotação, inclinação e retorno à área inicial do Recreio dos Bandeirantes.
+- Objetos de ocorrências em Three.js, raycast para abrir detalhes, prévia ao posicionar e modelos GLB opcionais com malhas procedurais de fallback.
+- Paleta de inserção acessível por teclado para postes apagados, buracos, alagamentos e ocorrências de segurança.
 - 10 ocorrências fictícias georreferenciadas, filtros e detalhes com histórico.
 - Cadastro completo por clique no mapa, validação, foto local opcional e persistência em `localStorage`.
 - Página “Minhas ocorrências” e painel administrativo com atualização persistente de status.
@@ -108,7 +110,12 @@ npm run test:db    # roda os testes de banco e RLS (requer Supabase local)
 
 ## Arquitetura
 
-### 1. Modo demonstração (padrão)
+- `src/components`: layout, mapa, formulários, detalhes e indicadores reutilizáveis.
+- `src/pages`: mapa, ocorrências do cidadão, administração e página institucional.
+- `src/repositories`: contrato de dados e implementação local.
+- `src/context`: estado compartilhado e operações assíncronas.
+- `src/data`: seed inicial gravado apenas quando não há dados no navegador.
+- `supabase/migrations`: tabelas, validações, índices e RLS sem políticas públicas permissivas.
 
 Sem `VITE_USE_SUPABASE=true`, login e cadastro funcionam em modo demonstrativo local: o login aceita um e-mail válido e qualquer senha não vazia, não salva a senha e cria apenas perfis de cidadão. Cada e-mail identifica seu próprio estado demonstrativo, que não autentica no servidor. A opção “Entrar com outro usuário” no menu do perfil permite voltar ao login. No Supabase, RPCs protegidas permitem editar ou cancelar somente ocorrências pendentes do próprio cidadão; ambas preservam o histórico. As leituras das notificações também são vinculadas ao usuário.
 
@@ -224,17 +231,4 @@ Encontrados na revisão de qualidade e registrados para correção:
 
 ## Limitações e próximos passos
 
-- **3D:** a versão atual usa o mapa inclinado com marcadores. Não há modelos GLB/GLTF nem prédios em 3D, porque os tiles raster do OpenStreetMap não trazem altura dos edifícios. O próximo passo é usar uma fonte vetorial com alturas e integrar Three.js com modelos otimizados.
-- **Busca por endereço:** ainda simulada.
-- **Fotos no modo demonstração:** ficam no navegador e não são enviadas a nenhum servidor.
-- **Próximas versões:** novas categorias (alagamento e segurança), confirmação "eu também vi", IA para classificar e agrupar relatos, aplicativo móvel e integração com prefeituras e concessionárias.
-
-## Equipe
-
-| Integrante | Frente |
-| --- | --- |
-| Rhuann | Back-end e integração |
-| Valentino | Mapa e interação 3D |
-| Léo | Front-end e telas |
-| Enzo | Design e assets 3D |
-| Gabriela | Pesquisa, qualidade e apresentação |
+A versão atual usa uma visualização cartográfica inclinada e marcadores georreferenciados estilizados. Ela **não implementa modelos GLB/GLTF ou extrusões reais de edifícios**, pois a fonte raster OSM escolhida não fornece footprints/alturas e o projeto não inclui modelos 3D. A evolução recomendada é adotar uma fonte vetorial licenciada, criar a camada de extrusão e integrar Three.js com modelos otimizados. Busca por endereço também permanece explicitamente simulada. Fotos pequenas são guardadas como data URL no armazenamento local e não são enviadas a servidor.

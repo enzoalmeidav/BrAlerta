@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import { Stats } from '../components/dashboard/Stats';
 import { StatusBadge, statusLabel } from '../components/incidents/StatusBadge';
 import { useIncidents } from '../context/IncidentsContext';
+import { incidentCategoryLabels } from '../types';
 import type { Incident, IncidentCategory, IncidentStatus } from '../types';
 
 type CategoryFilter = 'ALL' | IncidentCategory;
@@ -31,6 +32,8 @@ function parseCategoryFilter(value: string): CategoryFilter | null {
     case 'ALL':
     case 'STREETLIGHT':
     case 'POTHOLE':
+    case 'FLOOD':
+    case 'SAFETY':
       return value;
     default:
       return null;
@@ -38,7 +41,7 @@ function parseCategoryFilter(value: string): CategoryFilter | null {
 }
 
 function categoryName(category: IncidentCategory) {
-  return category === 'STREETLIGHT' ? 'Poste apagado' : 'Buraco na rua';
+  return incidentCategoryLabels[category];
 }
 
 function incidentLocation(incident: Incident) {
@@ -158,6 +161,8 @@ export function AdminPage() {
                 <option value="ALL">Todas as categorias</option>
                 <option value="STREETLIGHT">Poste apagado</option>
                 <option value="POTHOLE">Buraco na rua</option>
+                <option value="FLOOD">Rua alagada</option>
+                <option value="SAFETY">Ocorrência de segurança</option>
               </select>
             </label>
             <label className="admin-filter">
