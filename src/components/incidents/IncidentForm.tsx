@@ -6,6 +6,9 @@ import type { IncidentCategory, IncidentInput } from '../../types';
 type Coordinates = { lat: number; lng: number };
 
 type IncidentFormProps = {
+  initialCategory?: IncidentCategory;
+  category?: IncidentCategory;
+  onCategoryChange?: (category: IncidentCategory) => void;
   coords: Coordinates | null;
   onCancel: () => void;
   onSubmit: (value: IncidentInput) => Promise<void>;
@@ -14,8 +17,20 @@ type IncidentFormProps = {
 const photoTypes = ['image/jpeg', 'image/png', 'image/webp'];
 const maxPhotoSize = 5 * 1024 * 1024;
 
-export function IncidentForm({ coords, onCancel, onSubmit }: IncidentFormProps) {
-  const [category, setCategory] = useState<IncidentCategory>('STREETLIGHT');
+export function IncidentForm({
+  initialCategory = 'STREETLIGHT',
+  category: selectedCategory,
+  onCategoryChange,
+  coords,
+  onCancel,
+  onSubmit,
+}: IncidentFormProps) {
+  const [draftCategory, setDraftCategory] = useState<IncidentCategory>(initialCategory);
+  const category = selectedCategory ?? draftCategory;
+  const setCategory = (nextCategory: IncidentCategory) => {
+    if (selectedCategory === undefined) setDraftCategory(nextCategory);
+    onCategoryChange?.(nextCategory);
+  };
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [photo, setPhoto] = useState<string>();
@@ -120,6 +135,26 @@ export function IncidentForm({ coords, onCancel, onSubmit }: IncidentFormProps) 
               <span aria-hidden="true">⚠️</span>
               <b>Buraco na rua</b>
               {category === 'POTHOLE' && <Check aria-hidden="true" />}
+            </button>
+            <button
+              type="button"
+              className={category === 'FLOOD' ? 'selected' : ''}
+              aria-pressed={category === 'FLOOD'}
+              onClick={() => setCategory('FLOOD')}
+            >
+              <span aria-hidden="true">🌊</span>
+              <b>Rua alagada</b>
+              {category === 'FLOOD' && <Check aria-hidden="true" />}
+            </button>
+            <button
+              type="button"
+              className={category === 'SAFETY' ? 'selected' : ''}
+              aria-pressed={category === 'SAFETY'}
+              onClick={() => setCategory('SAFETY')}
+            >
+              <span aria-hidden="true">🛡️</span>
+              <b>Segurança</b>
+              {category === 'SAFETY' && <Check aria-hidden="true" />}
             </button>
           </div>
         </fieldset>

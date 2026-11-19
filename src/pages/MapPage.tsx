@@ -50,10 +50,10 @@ export function MapPage() {
     <div className="map-stage">
       {loading && <div className="loading">Carregando mapa urbano...</div>}
       {error && <div className="error-banner"><span>{error}</span><button disabled={refreshing} onClick={()=>void refresh()}>{refreshing?'Tentando...':'Tentar novamente'}</button></div>}
-      <CityMap incidents={activeIncidents} selectedId={selected?.id} placing={placing} onSelect={onSelect} onPlace={setCoords} focus={focus}/>
+      <CityMap incidents={activeIncidents} selectedId={selected?.id} placing={placing} onSelect={onSelect} onPlace={setCoords} onSetPlacing={(category)=>{setPlacing(category);setSelected(null);setCoords(null)}} focus={focus}/>
       {!placing && !selected && <div className="map-welcome"><span><Sparkles/> VISÃO COLABORATIVA</span><h1>Veja a cidade.<br/><em>Ajude a transformá-la.</em></h1><p>Explore ocorrências urbanas demonstrativas ou registre um novo ponto no mapa.</p></div>}
-      {!placing && <button className="register" onClick={()=>{setPlacing('STREETLIGHT');setSelected(null)}}><Plus/> Registrar ocorrência</button>}
-      {placing && <IncidentForm coords={coords} onCancel={()=>{setPlacing(null);setCoords(null)}} onSubmit={submit}/>}
+      {!placing && <button className="register" onClick={()=>{setPlacing('STREETLIGHT');setSelected(null);setCoords(null)}}><Plus/> Registrar ocorrência</button>}
+      {placing && <IncidentForm category={placing} onCategoryChange={setPlacing} coords={coords} onCancel={()=>{setPlacing(null);setCoords(null)}} onSubmit={submit}/>}
     </div>
     {selected && <IncidentDetails incident={selected} onClose={()=>setSelected(null)} onMap={()=>setFocus({lat:selected.latitude,lng:selected.longitude})}/>}
   </div>;

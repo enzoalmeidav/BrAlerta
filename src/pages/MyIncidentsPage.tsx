@@ -5,6 +5,7 @@ import { Stats } from '../components/dashboard/Stats';
 import { StatusBadge } from '../components/incidents/StatusBadge';
 import { useAuth } from '../context/AuthContext';
 import { useIncidents } from '../context/IncidentsContext';
+import { incidentCategoryLabels } from '../types';
 import type {
   Incident,
   IncidentCategory,
@@ -22,7 +23,7 @@ const initialDraft: IncidentUpdateInput = {
 };
 
 function categoryName(category: IncidentCategory) {
-  return category === 'STREETLIGHT' ? 'Poste apagado' : 'Buraco na rua';
+  return incidentCategoryLabels[category];
 }
 
 export function MyIncidentsPage() {
@@ -150,6 +151,8 @@ export function MyIncidentsPage() {
                 <option value="ALL">Todas as categorias</option>
                 <option value="STREETLIGHT">Poste apagado</option>
                 <option value="POTHOLE">Buraco na rua</option>
+                <option value="FLOOD">Rua alagada</option>
+                <option value="SAFETY">Ocorrência de segurança</option>
               </select>
             </label>
             <label>
@@ -280,6 +283,8 @@ export function MyIncidentsPage() {
                 >
                   <option value="STREETLIGHT">Poste apagado</option>
                   <option value="POTHOLE">Buraco na rua</option>
+                  <option value="FLOOD">Rua alagada</option>
+                  <option value="SAFETY">Ocorrência de segurança</option>
                 </select>
               </label>
               <label>

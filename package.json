@@ -15,12 +15,14 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",
+    "@types/three": "^0.187.0",
     "@vitejs/plugin-react": "latest",
     "lucide-react": "latest",
     "maplibre-gl": "latest",
     "react": "latest",
     "react-dom": "latest",
-    "react-router-dom": "latest"
+    "react-router-dom": "latest",
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "@eslint/js": "latest",

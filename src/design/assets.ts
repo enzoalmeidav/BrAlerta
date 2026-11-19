@@ -37,7 +37,9 @@ export interface CategoriaVisual {
   modeloResolvido?: ModeloVisual;
 }
 
-export const CATEGORIAS: Record<IncidentCategory, CategoriaVisual> = {
+type CategoriaComAssetOficial = Extract<IncidentCategory, 'STREETLIGHT' | 'POTHOLE'>;
+
+export const CATEGORIAS: Record<CategoriaComAssetOficial, CategoriaVisual> = {
   STREETLIGHT: {
     nome: 'Poste apagado',
     cor: '#f4a340',
@@ -55,6 +57,13 @@ export const CATEGORIAS: Record<IncidentCategory, CategoriaVisual> = {
   },
 };
 
+export function visualDaCategoria(categoria: IncidentCategory): CategoriaVisual | undefined {
+  if (categoria === 'STREETLIGHT' || categoria === 'POTHOLE') {
+    return CATEGORIAS[categoria];
+  }
+  return undefined;
+}
+
 /** Classes Tailwind do selo de status (usa os tokens de src/design/tokens.css) */
 export const STATUS_CLASSES: Record<IncidentStatus, string> = {
   PENDING: 'bg-pendente-fundo text-pendente',
@@ -64,7 +73,11 @@ export const STATUS_CLASSES: Record<IncidentStatus, string> = {
 };
 
 /** Escolhe o modelo certo: poste aceso quando o problema foi resolvido */
-export function modeloDaOcorrencia(categoria: IncidentCategory, status: IncidentStatus): ModeloVisual {
-  const c = CATEGORIAS[categoria];
+export function modeloDaOcorrencia(
+  categoria: IncidentCategory,
+  status: IncidentStatus,
+): ModeloVisual | undefined {
+  const c = visualDaCategoria(categoria);
+  if (!c) return undefined;
   return status === 'RESOLVED' && c.modeloResolvido ? c.modeloResolvido : c.modelo;
 }

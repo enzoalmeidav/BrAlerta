@@ -12,7 +12,9 @@ import {
   MapPin,
   Menu,
   ShieldCheck,
+  ShieldAlert,
   TriangleAlert,
+  Waves,
   X,
 } from 'lucide-react';
 import { useMemo, useState } from 'react';
@@ -20,6 +22,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useIncidents } from '../../context/IncidentsContext';
 import { statusLabel } from '../incidents/StatusBadge';
+import { incidentCategoryLabels } from '../../types';
 import type { Incident, IncidentCategory } from '../../types';
 
 import { MARCA } from '../../design/assets';
@@ -32,7 +35,7 @@ type SystemNotification = {
 };
 
 function categoryName(category: IncidentCategory) {
-  return category === 'STREETLIGHT' ? 'Poste apagado' : 'Buraco na rua';
+  return incidentCategoryLabels[category];
 }
 
 function notificationsFor(incidents: Incident[]): SystemNotification[] {
@@ -214,12 +217,14 @@ export function AppShell() {
           <div className="category-items">
             <div><Lightbulb size={17} /><span>Poste apagado</span></div>
             <div><TriangleAlert size={17} /><span>Buraco na rua</span></div>
+            <div><Waves size={17} /><span>Rua alagada</span></div>
+            <div><ShieldAlert size={17} /><span>Ocorrência de segurança</span></div>
           </div>
         </div>
 
         <div className="city">
           <span className="city-thumbnail" aria-hidden="true">🌆</span>
-          <span><b>Rio de Janeiro</b><small>Região Centro</small></span>
+          <span><b>Rio de Janeiro</b><small>Recreio dos Bandeirantes</small></span>
           <ChevronDown size={15} />
         </div>
       </aside>
